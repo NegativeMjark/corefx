@@ -165,13 +165,13 @@ namespace System.IO.Pipes
             }
 
             // For anonymous pipes, write the file descriptor.
-            fixed (byte* bufPtr = &MemoryMarshal.GetReference(buffer))
+            while (buffer.Length > 0)
             {
-                while (buffer.Length > 0)
+                fixed (byte* bufPtr = &MemoryMarshal.GetReference(buffer))
                 {
                     int bytesWritten = CheckPipeCall(Interop.Sys.Write(_handle, bufPtr, buffer.Length));
-                    buffer = buffer.Slice(bytesWritten);
                 }
+                buffer = buffer.Slice(bytesWritten);
             }
         }
 
